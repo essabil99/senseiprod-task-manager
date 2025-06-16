@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{isEditMode ? 'Edit Department' : 'Create Department'}}</h2>
+
+<form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter department name">
+      <mat-error *ngIf="departmentForm.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+      <mat-error *ngIf="departmentForm.get('name')?.hasError('maxlength')">
+        Name cannot exceed 100 characters
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" placeholder="Enter department description" rows="4"></textarea>
+      <mat-error *ngIf="departmentForm.get('description')?.hasError('maxlength')">
+        Description cannot exceed 500 characters
+      </mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="departmentForm.invalid || loading">
+      <mat-spinner diameter="20" *ngIf="loading" class="spinner-button"></mat-spinner>
+      <span *ngIf="!loading">{{isEditMode ? 'Update' : 'Create'}}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

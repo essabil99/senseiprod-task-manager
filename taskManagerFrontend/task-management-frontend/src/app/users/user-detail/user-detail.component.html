@@ -1,0 +1,114 @@
+<div class="user-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading user data...</p>
+  </div>
+
+  <div *ngIf="!loading && user" class="user-detail-content">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon class="avatar-icon">person</mat-icon>
+        </div>
+        <mat-card-title>{{user.fullName}}</mat-card-title>
+        <mat-card-subtitle>
+          <span [ngClass]="'role-badge role-' + user.role.toLowerCase()">
+            {{user.role === 'ADMIN' ? 'Admin' :
+              (user.role === 'DEPARTMENT_MANAGER' ? 'Department Manager' : 'Employee')}}
+          </span>
+          <span [ngClass]="user.isActive ? 'status-active' : 'status-inactive'" class="status-badge">
+            {{user.isActive ? 'Active' : 'Inactive'}}
+          </span>
+        </mat-card-subtitle>
+
+        <div class="header-actions">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="User actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditForm()" *ngIf="canManageUser()">
+              <mat-icon>edit</mat-icon>
+              <span>Edit User</span>
+            </button>
+            <button mat-menu-item (click)="openPasswordChangeForm()" *ngIf="canManageUser()">
+              <mat-icon>lock</mat-icon>
+              <span>Change Password</span>
+            </button>
+            <button mat-menu-item (click)="confirmDelete()" *ngIf="canDeleteUser()">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Delete User</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-divider></mat-divider>
+
+        <div class="user-info-section">
+          <h3>User Information</h3>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{user.email}}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Department</span>
+              <span class="info-value">{{user.department?.name || 'N/A'}}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Created</span>
+              <span class="info-value">{{user.createdAt | date:'medium'}}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Last Updated</span>
+              <span class="info-value">{{user.updatedAt | date:'medium'}}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="info-label">Work Environments</span>
+              <span class="info-value">{{user.workEnvironmentCount || 0}}</span>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="work-environments-section">
+          <h3>Work Environments</h3>
+
+          <div *ngIf="workEnvironments.length === 0" class="empty-state">
+            <mat-icon>business</mat-icon>
+            <p>No work environments found for this user.</p>
+          </div>
+
+          <div *ngIf="workEnvironments.length > 0" fxLayout="row wrap" fxLayoutGap="20px grid">
+            <mat-card *ngFor="let env of workEnvironments" fxFlex="33%" fxFlex.lt-md="100%" class="environment-card"
+                      [routerLink]="['/work-environments', env.id]">
+              <mat-card-header>
+                <mat-icon mat-card-avatar>business</mat-icon>
+                <mat-card-title>{{env.name}}</mat-card-title>
+                <mat-card-subtitle>{{env.department.name}}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p *ngIf="env.description">{{env.description}}</p>
+                <p *ngIf="!env.description" class="text-muted">No description</p>
+                <p class="task-count">
+                  <mat-icon>assignment</mat-icon> {{env.taskCount || 0}} tasks
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button routerLink="/users">Back to Users</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,162 @@
+<div class="work-environment-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading work environment data...</p>
+  </div>
+
+  <div *ngIf="!loading && workEnvironment" class="work-environment-detail-content">
+    <mat-card class="header-card">
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon class="avatar-icon">business</mat-icon>
+        </div>
+        <mat-card-title>{{workEnvironment.name}}</mat-card-title>
+        <mat-card-subtitle>
+          <a [routerLink]="['/departments', workEnvironment.department.id]">{{workEnvironment.department.name}}</a>
+          &nbsp;•&nbsp;
+          <a [routerLink]="['/users', workEnvironment.user.id]">{{workEnvironment.user.fullName}}</a>
+        </mat-card-subtitle>
+
+        <div class="header-actions">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Work environment actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditForm()" *ngIf="canManageWorkEnvironment()">
+              <mat-icon>edit</mat-icon>
+              <span>Edit Work Environment</span>
+            </button>
+            <button mat-menu-item (click)="confirmDelete()" *ngIf="canManageWorkEnvironment()">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Delete Work Environment</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content *ngIf="workEnvironment.description">
+        <p class="description">{{workEnvironment.description}}</p>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button routerLink="/work-environments">Back to Work Environments</button>
+        <button mat-raised-button color="primary" (click)="openTaskForm()" *ngIf="canManageWorkEnvironment()">
+          <mat-icon>add</mat-icon> Add Task
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div class="tasks-container">
+      <h2>Tasks</h2>
+
+      <div *ngIf="tasks.length === 0" class="empty-state">
+        <mat-icon>assignment</mat-icon>
+        <p>No tasks found in this work environment.</p>
+        <button mat-raised-button color="primary" (click)="openTaskForm()" *ngIf="canManageWorkEnvironment()">
+          Create Task
+        </button>
+      </div>
+
+      <div *ngIf="tasks.length > 0" class="task-board" fxLayout="row wrap" fxLayoutGap="20px">
+        <!-- To Do Column -->
+        <div class="task-column" fxFlex="33%" fxFlex.lt-md="100%">
+          <div class="column-header todo">
+            <h3>To Do</h3>
+            <span class="task-count">{{tasksByStatus[TaskStatus.TODO].length}}</span>
+          </div>
+
+          <div class="task-list">
+            <mat-card *ngFor="let task of tasksByStatus[TaskStatus.TODO]" class="task-card"
+                      [routerLink]="['/tasks', task.id]">
+              <mat-card-header>
+                <mat-card-title>{{task.title}}</mat-card-title>
+                <div class="priority-indicator" [ngClass]="'priority-' + task.priority.toLowerCase()"></div>
+              </mat-card-header>
+              <mat-card-content>
+                <p *ngIf="task.description" class="task-description">{{task.description}}</p>
+                <div class="task-meta">
+                  <div *ngIf="task.dueDate" class="due-date" [ngClass]="{'overdue': task.overdue}">
+                    <mat-icon>event</mat-icon>
+                    <span>{{task.dueDate | date:'mediumDate'}}</span>
+                  </div>
+                  <div class="created-at">
+                    <span>Created {{task.createdAt | dateAgo}}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div *ngIf="tasksByStatus[TaskStatus.TODO].length === 0" class="empty-column">
+              <p>No tasks to do</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div class="task-column" fxFlex="33%" fxFlex.lt-md="100%">
+          <div class="column-header pending">
+            <h3>In Progress</h3>
+            <span class="task-count">{{tasksByStatus[TaskStatus.PENDING].length}}</span>
+          </div>
+
+          <div class="task-list">
+            <mat-card *ngFor="let task of tasksByStatus[TaskStatus.PENDING]" class="task-card"
+                      [routerLink]="['/tasks', task.id]">
+              <mat-card-header>
+                <mat-card-title>{{task.title}}</mat-card-title>
+                <div class="priority-indicator" [ngClass]="'priority-' + task.priority.toLowerCase()"></div>
+              </mat-card-header>
+              <mat-card-content>
+                <p *ngIf="task.description" class="task-description">{{task.description}}</p>
+                <div class="task-meta">
+                  <div *ngIf="task.dueDate" class="due-date" [ngClass]="{'overdue': task.overdue}">
+                    <mat-icon>event</mat-icon>
+                    <span>{{task.dueDate | date:'mediumDate'}}</span>
+                  </div>
+                  <div class="created-at">
+                    <span>Updated {{task.statusChangedAt ? (task.statusChangedAt | dateAgo) : ''}}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div *ngIf="tasksByStatus[TaskStatus.PENDING].length === 0" class="empty-column">
+              <p>No tasks in progress</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed Column -->
+        <div class="task-column" fxFlex="33%" fxFlex.lt-md="100%">
+          <div class="column-header done">
+            <h3>Completed</h3>
+            <span class="task-count">{{tasksByStatus[TaskStatus.DONE].length}}</span>
+          </div>
+
+          <div class="task-list">
+            <mat-card *ngFor="let task of tasksByStatus[TaskStatus.DONE]" class="task-card"
+                      [routerLink]="['/tasks', task.id]">
+              <mat-card-header>
+                <mat-card-title>{{task.title}}</mat-card-title>
+                <div class="priority-indicator" [ngClass]="'priority-' + task.priority.toLowerCase()"></div>
+              </mat-card-header>
+              <mat-card-content>
+                <p *ngIf="task.description" class="task-description">{{task.description}}</p>
+                <div class="task-meta">
+                  <div class="completed-at">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Completed {{task.statusChangedAt ? (task.statusChangedAt | dateAgo) : ''}}</span>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div *ngIf="tasksByStatus[TaskStatus.DONE].length === 0" class="empty-column">
+              <p>No completed tasks</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

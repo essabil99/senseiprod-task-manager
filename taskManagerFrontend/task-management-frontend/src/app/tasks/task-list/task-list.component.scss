@@ -1,0 +1,87 @@
+.task-list-container {
+  padding: 20px;
+
+  .filter-panel {
+    margin-bottom: 20px;
+
+    .filter-form {
+      padding: 16px 0;
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        padding-top: 8px;
+      }
+
+      .filter-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-top: 8px;
+      }
+    }
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .results-count {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .table-container {
+    position: relative;
+    min-height: 200px;
+    overflow: auto;
+
+    .loading-shade {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  table {
+    width: 100%;
+  }
+
+  a {
+    color: #7a1c46;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .priority-indicator {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .overdue-text {
+    color: #f44336;
+    font-weight: 500;
+  }
+
+  .no-due-date {
+    color: rgba(0, 0, 0, 0.5);
+    font-style: italic;
+  }
+}

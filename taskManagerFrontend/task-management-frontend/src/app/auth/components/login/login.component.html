@@ -1,0 +1,57 @@
+<div class="login-container">
+  <div class="login-wrapper">
+    <!-- Header Section -->
+    <div class="login-header">
+      <div class="logo-section">
+        <a href="#" class="logo-link">
+          <img src="/assets/logo.png" alt="Senseiprod Logo" class="logo-image" />
+          <h1 class="brand-title">Senseiprod</h1>
+        </a>
+      </div>
+      <h2 class="welcome-title">Welcome Back</h2>
+      <p class="welcome-subtitle">Sign in to your Task Management System</p>
+    </div>
+
+    <!-- Login Card -->
+    <mat-card class="login-card">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-card-content class="login-content">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" placeholder="Enter your email" type="email" autocomplete="email">
+            <mat-icon matSuffix class="input-icon">email</mat-icon>
+            <mat-error *ngIf="f['email'].errors?.['required']">Email is required</mat-error>
+            <mat-error *ngIf="f['email'].errors?.['email']">Please enter a valid email address</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="current-password" placeholder="Enter your password">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" class="password-toggle">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="f['password'].errors?.['required']">Password is required</mat-error>
+          </mat-form-field>
+
+          <div class="login-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid || loading" class="login-button">
+              <mat-spinner diameter="20" *ngIf="loading" class="spinner-button"></mat-spinner>
+              <span *ngIf="!loading">Sign In</span>
+            </button>
+          </div>
+
+          <div class="divider">
+            <span class="divider-text">or</span>
+          </div>
+
+          <div class="register-section">
+            <p class="register-text">Don't have an account?</p>
+            <button mat-button color="primary" type="button" routerLink="/auth/register" class="register-link">
+              Create Account
+            </button>
+          </div>
+        </mat-card-content>
+      </form>
+    </mat-card>
+  </div>
+</div>

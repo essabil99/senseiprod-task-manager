@@ -1,0 +1,21 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  p {
+    margin-top: 10px;
+  }
+}
+
+.spinner-button {
+  display: inline-block;
+  margin-right: 8px;
+}

@@ -1,0 +1,148 @@
+<div class="task-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading task data...</p>
+  </div>
+
+  <div *ngIf="!loading && task" class="task-detail-content">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon class="avatar-icon" [style.color]="getStatusColor(task.status)">assignment</mat-icon>
+        </div>
+        <mat-card-title>{{task.title}}</mat-card-title>
+        <mat-card-subtitle>
+          <div class="task-meta">
+            <span class="status-badge" [style.background-color]="getStatusColor(task.status)">
+              {{task.status | taskStatus}}
+            </span>
+            <span class="priority-badge" [style.background-color]="getPriorityColor(task.priority)">
+              {{task.priority | taskPriority}} Priority
+            </span>
+          </div>
+        </mat-card-subtitle>
+
+        <div class="header-actions">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Task actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditForm()" *ngIf="canManageTask()">
+              <mat-icon>edit</mat-icon>
+              <span>Edit Task</span>
+            </button>
+            <button mat-menu-item (click)="confirmDelete()" *ngIf="canManageTask()">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Delete Task</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="task.description" class="description-section">
+          <h3>Description</h3>
+          <p class="description">{{task.description}}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="info-section">
+          <h3>Task Information</h3>
+
+          <div class="info-grid">
+            <!-- Work Environment -->
+            <div class="info-item" *ngIf="task.workEnvironment">
+              <span class="info-label">Work Environment</span>
+              <span class="info-value">
+                <a [routerLink]="['/work-environments', task.workEnvironment.id]">
+                  {{task.workEnvironment.name}}
+                </a>
+              </span>
+            </div>
+
+            <!-- Department -->
+            <div class="info-item" *ngIf="task.workEnvironment?.department">
+              <span class="info-label">Department</span>
+              <span class="info-value">
+                <a [routerLink]="['/departments', task.workEnvironment.department.id]">
+                  {{task.workEnvironment.department.name}}
+                </a>
+              </span>
+            </div>
+
+            <!-- Owner -->
+            <div class="info-item" *ngIf="task.workEnvironment?.user">
+              <span class="info-label">Owner</span>
+              <span class="info-value">
+                <a [routerLink]="['/users', task.workEnvironment?.user?.id]">
+                  {{task.workEnvironment?.user?.fullName}} (ID: {{task.workEnvironment?.user?.id}})
+                </a>
+              </span>
+            </div>
+
+            <!-- Due Date -->
+            <div class="info-item">
+              <span class="info-label">Due Date</span>
+              <span class="info-value" [ngClass]="{'overdue': task.overdue}">
+                {{task.dueDate ? (task.dueDate | date:'full') : 'No due date'}}
+              </span>
+            </div>
+
+            <!-- Created -->
+            <div class="info-item">
+              <span class="info-label">Created</span>
+              <span class="info-value">{{task.createdAt | date:'medium'}}</span>
+            </div>
+
+            <!-- Last Updated -->
+            <div class="info-item">
+              <span class="info-label">Last Updated</span>
+              <span class="info-value">{{task.updatedAt | date:'medium'}}</span>
+            </div>
+
+            <!-- Status Changed -->
+            <div class="info-item" *ngIf="task.statusChangedAt">
+              <span class="info-label">Status Changed</span>
+              <span class="info-value">{{task.statusChangedAt | date:'medium'}}</span>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="status-section" *ngIf="canManageTask()">
+          <h3>Status Management</h3>
+
+          <div class="status-actions">
+            <button mat-raised-button
+                    color="primary"
+                    (click)="progressTask()"
+                    *ngIf="getNextStatus()"
+                    [disabled]="loading">
+              <mat-icon>arrow_forward</mat-icon>
+              Progress to {{getNextStatus() ? (getNextStatus()! | taskStatus) : ''}}
+            </button>
+
+            <div class="status-buttons">
+              <button mat-button
+                      *ngFor="let status of taskStatuses"
+                      [color]="task.status === status ? 'primary' : ''"
+                      [disabled]="task.status === status || loading"
+                      (click)="updateTaskStatus(status)">
+                {{status | taskStatus}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button routerLink="/tasks">Back to Tasks</button>
+        <button mat-button *ngIf="task.workEnvironment" [routerLink]="['/work-environments', task.workEnvironment.id]">
+          View Work Environment
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

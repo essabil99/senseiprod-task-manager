@@ -1,0 +1,103 @@
+<div class="department-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading department data...</p>
+  </div>
+
+  <div *ngIf="!loading && department" class="department-detail-content">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar>
+          <mat-icon class="avatar-icon">business</mat-icon>
+        </div>
+        <mat-card-title>{{department.name}}</mat-card-title>
+        <mat-card-subtitle *ngIf="department.description">{{department.description}}</mat-card-subtitle>
+
+        <div class="header-actions" *ngIf="isAdmin">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Department actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="openEditForm()">
+              <mat-icon>edit</mat-icon>
+              <span>Edit Department</span>
+            </button>
+            <button mat-menu-item (click)="confirmDelete()">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Delete Department</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-divider></mat-divider>
+
+        <!-- Users Section -->
+        <div class="section">
+          <div class="section-header">
+            <h3>Users</h3>
+            <span class="count-badge">{{users.length}}</span>
+          </div>
+
+          <div *ngIf="users.length === 0" class="empty-state">
+            <mat-icon>people</mat-icon>
+            <p>No users found in this department.</p>
+          </div>
+
+          <mat-list *ngIf="users.length > 0">
+            <mat-list-item *ngFor="let user of users" [routerLink]="['/users', user.id]" class="clickable-item">
+              <mat-icon matListItemIcon>person</mat-icon>
+              <div matListItemTitle>{{user.fullName}}</div>
+              <div matListItemLine>{{user.email}}</div>
+              <div matListItemMeta>
+                <span [ngClass]="'role-badge role-' + user.role.toLowerCase()">
+                  {{user.role === 'ADMIN' ? 'Admin' :
+                    (user.role === 'DEPARTMENT_MANAGER' ? 'Manager' : 'Employee')}}
+                </span>
+              </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Work Environments Section -->
+        <div class="section">
+          <div class="section-header">
+            <h3>Work Environments</h3>
+            <span class="count-badge">{{workEnvironments.length}}</span>
+          </div>
+
+          <div *ngIf="workEnvironments.length === 0" class="empty-state">
+            <mat-icon>business</mat-icon>
+            <p>No work environments found in this department.</p>
+          </div>
+
+          <div *ngIf="workEnvironments.length > 0" fxLayout="row wrap" fxLayoutGap="20px grid">
+            <mat-card *ngFor="let env of workEnvironments" fxFlex="33%" fxFlex.lt-md="100%" class="environment-card"
+                      [routerLink]="['/work-environments', env.id]">
+              <mat-card-header>
+                <mat-icon mat-card-avatar>business</mat-icon>
+                <mat-card-title>{{env.name}}</mat-card-title>
+                <mat-card-subtitle>{{env.user.fullName}}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p *ngIf="env.description">{{env.description}}</p>
+                <p *ngIf="!env.description" class="text-muted">No description</p>
+                <p class="task-count">
+                  <mat-icon>assignment</mat-icon> {{env.taskCount || 0}} tasks
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button routerLink="/departments">Back to Departments</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

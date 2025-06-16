@@ -1,0 +1,107 @@
+<div class="register-container">
+  <div class="register-wrapper">
+    <!-- Header Section -->
+    <div class="register-header">
+      <div class="logo-section">
+        <a href="#" class="logo-link">
+          <img src="/assets/logo.png" alt="Senseiprod Logo" class="logo-image" />
+          <h1 class="brand-title">Senseiprod</h1>
+        </a>
+      </div>
+      <h2 class="welcome-title">Create Your Account</h2>
+      <p class="welcome-subtitle">Join the Task Management System and start organizing your work</p>
+    </div>
+
+    <!-- Register Card -->
+    <mat-card class="register-card">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <mat-card-content class="register-content">
+          <!-- Name Fields -->
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" placeholder="Enter your first name" autocomplete="given-name">
+              <mat-icon matSuffix class="input-icon">person</mat-icon>
+              <mat-error *ngIf="f['firstName'].errors?.['required']">First name is required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" placeholder="Enter your last name" autocomplete="family-name">
+              <mat-icon matSuffix class="input-icon">person</mat-icon>
+              <mat-error *ngIf="f['lastName'].errors?.['required']">Last name is required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Email Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" placeholder="Enter your email address" type="email" autocomplete="email">
+            <mat-icon matSuffix class="input-icon">email</mat-icon>
+            <mat-error *ngIf="f['email'].errors?.['required']">Email is required</mat-error>
+            <mat-error *ngIf="f['email'].errors?.['email']">Please enter a valid email address</mat-error>
+          </mat-form-field>
+
+          <!-- Password Fields -->
+          <div class="password-section">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" autocomplete="new-password" placeholder="Create a strong password">
+              <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" class="password-toggle">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+              <mat-error *ngIf="f['password'].errors?.['required']">Password is required</mat-error>
+              <mat-error *ngIf="f['password'].errors?.['minlength']">Password must be at least 6 characters</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Confirm Password</mat-label>
+              <input matInput formControlName="confirmPassword" [type]="hidePassword ? 'password' : 'text'" autocomplete="new-password" placeholder="Confirm your password">
+              <mat-icon matSuffix class="input-icon">lock</mat-icon>
+              <mat-error *ngIf="f['confirmPassword'].errors?.['required']">Confirm password is required</mat-error>
+              <mat-error *ngIf="f['confirmPassword'].errors?.['passwordMismatch']">Passwords do not match</mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Department Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="departmentId" placeholder="Select your department">
+              <mat-option *ngIf="loadingDepartments" disabled>
+                <mat-spinner diameter="20"></mat-spinner>
+                Loading departments...
+              </mat-option>
+              <mat-option *ngFor="let dept of departments" [value]="dept.id">
+                <div class="department-option">
+                  <span class="dept-name">{{dept.name}}</span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix class="input-icon">business</mat-icon>
+            <mat-error *ngIf="f['departmentId'].errors?.['required']">Department is required</mat-error>
+          </mat-form-field>
+
+          <!-- Register Button -->
+          <div class="register-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid || loading" class="register-button">
+              <mat-spinner diameter="20" *ngIf="loading" class="spinner-button"></mat-spinner>
+              <span *ngIf="!loading">Create Account</span>
+            </button>
+          </div>
+
+          <div class="divider">
+            <span class="divider-text">or</span>
+          </div>
+
+          <!-- Login Link -->
+          <div class="login-section">
+            <p class="login-text">Already have an account?</p>
+            <button mat-button color="primary" type="button" routerLink="/auth/login" class="login-link">
+              Sign In Instead
+            </button>
+          </div>
+        </mat-card-content>
+      </form>
+    </mat-card>
+  </div>
+</div>

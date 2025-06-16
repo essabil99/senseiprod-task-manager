@@ -1,0 +1,63 @@
+<div class="main-layout" *ngIf="currentUser$ | async as currentUser">
+  <mat-toolbar color="primary" class="app-toolbar">
+    <button mat-icon-button (click)="toggleMenu()" class="menu-button">
+      <img src="assets/logo.png" alt="Logo" class="logo-img" />
+    </button>
+
+    <span class="app-title">Système de gestion des tâches Senseiprod</span>
+
+    <span class="spacer"></span>
+
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+      <mat-icon>{{currentUser.fullName}}</mat-icon>
+    </button>
+
+    <mat-menu #userMenu="matMenu">
+      <div class="user-info">
+        <div class="user-name">{{currentUser.fullName}}</div>
+        <div class="user-email">{{currentUser.email}}</div>
+        <div class="user-role">{{currentUser.role === 'ADMIN' ? 'Admin' :
+          (currentUser.role === 'DEPARTMENT_MANAGER' ? 'Manager' : 'Employee')}}</div>
+      </div>
+      <mat-divider></mat-divider>
+      <button mat-menu-item [routerLink]="['/users', currentUser.id]">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+                 [attr.role]="'navigation'"
+                 [mode]="'over'"
+                 [opened]="isMenuOpen">
+      <mat-toolbar class="sidenav-toolbar">Navigation</mat-toolbar>
+      <mat-nav-list>
+        <ng-container *ngFor="let item of menuItems">
+          <a mat-list-item
+             *ngIf="hasRole(item.roles, currentUser.role)"
+             [routerLink]="item.route"
+             routerLinkActive="active-link"
+             [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+             (click)="isMenuOpen = false">
+            <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+            <div matListItemTitle>{{item.label}}</div>
+          </a>
+        </ng-container>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="main-content">
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+
+<div class="auth-layout" *ngIf="!(currentUser$ | async)">
+  <router-outlet></router-outlet>
+</div>

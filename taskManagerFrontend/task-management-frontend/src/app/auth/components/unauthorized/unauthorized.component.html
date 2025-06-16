@@ -1,0 +1,21 @@
+<div class="unauthorized-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-icon color="warn" class="large-icon">security</mat-icon>
+      <mat-card-title>Access Denied</mat-card-title>
+      <mat-card-subtitle>You don't have permission to access this resource</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>
+        Sorry, you don't have the necessary permissions to view this page.
+        If you believe this is an error, please contact your administrator.
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button (click)="goBack()">Go Back</button>
+      <button mat-raised-button color="primary" routerLink="/">Go to Dashboard</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
